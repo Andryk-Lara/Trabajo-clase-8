@@ -6,17 +6,14 @@
 // Modelo.
 //
 
-// Contador de tareas (para asignar un id único a cada tarea).
-let contadorTareas = 0;
+
 // Lista de tareas (Array).
 let tareas = [];
 
-fetch(`https://js2-tareas-api.netlify.app/api/tareas?uid=8`)
+fetch(`https://js2-tareas-api.netlify.app/api/tareas?uid=18`)
   .then((response) => response.json())
   .then((data) => {
     tareas = data;
-    // Inicialización de la lista del DOM, a partir de las tareas existentes.
-    console.log(tareas);
     for (let i = 0; i < tareas.length; i++) {
       appendTaskDOM(tareas[i]);
     }
@@ -25,15 +22,11 @@ fetch(`https://js2-tareas-api.netlify.app/api/tareas?uid=8`)
 // Se lee el contador de tareas del localStorage.
 const contadorLocalStorage = localStorage.getItem('contador');
 
-if (contadorLocalStorage) {
-  contadorTareas = parseInt(contadorLocalStorage);
-}
 
 // addTask(): Agrega una tarea en la lista.
 function addTask(nombreTarea, fechaTarea, completoTarea) {
   // Crea un objeto que representa la nueva tarea.
   const nuevaTarea = {
-    _id: contadorTareas,
     name: nombreTarea,
     complete: completoTarea,
     date: fechaTarea,
@@ -42,16 +35,17 @@ function addTask(nombreTarea, fechaTarea, completoTarea) {
   // Agrega el objeto en el array.
   tareas.push(nuevaTarea);
 
-  // Incrementa el contador de tareas.
-  contadorTareas++;
-  // Se guarda el contador de tareas en localStorage.
-  localStorage.setItem('contador', contadorTareas);
+  const fetchOptions = {
+    method: 'POST',
+    body: JSON.stringify(nuevaTarea),
+  };
 
-  // Agrega la tarea al DOM.
-  appendTaskDOM(nuevaTarea);
-
-  // Guarda la lista de tareas en localStorage.
-  localStorage.setItem('tareas', JSON.stringify(tareas));
+  fetch(`https://js2-tareas-api.netlify.app/api/tareas?uid=18`,fetchOptions)
+    .then((response) => response.json())
+    .then((karma) => {
+      console.log(karma);
+      appendTaskDOM(karma);
+    })
 }
 
 // taskStatus(): Actualiza el estado de una tarea.
